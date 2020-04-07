@@ -20,10 +20,12 @@
 #
 
 CC=gcc
-CFLAGS+=-Wall -D_REENTRANT -DDEBUG -g -O0 -I$(INCLUDE_LOCATION) $(CPPFLAGS)
+orcania_INCLUDE ?= $(shell pkg-config --cflags liborcania)
+orcania_LIBS ?= $(shell pkg-config --libs liborcania)
+CFLAGS+=-Wall -D_REENTRANT -DDEBUG -g -O0 -I$(INCLUDE_LOCATION) $(orcania_INCLUDE) $(CPPFLAGS)
 YDER_LOCATION=../src
 INCLUDE_LOCATION=../include
-LIBS=-lc -lorcania -lyder $(shell pkg-config --libs check) -L$(YDER_LOCATION)
+LIBS=-lc $(orcania_LIBS) -lyder $(shell pkg-config --libs check) -L$(YDER_LOCATION)
 
 all: test
 

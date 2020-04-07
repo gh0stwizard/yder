@@ -21,33 +21,41 @@ TEST_LOCATION=./test
 all: release
 
 debug:
-	cd $(LIBYDER_LOCATION) && $(MAKE) debug $*
+	$(MAKE) -C $(LIBYDER_LOCATION) debug $*
 
-install:
-	cd $(LIBYDER_LOCATION) && $(MAKE) install
+install: shared
+	$(MAKE) -C $(LIBYDER_LOCATION) install
+
+static-install: static
+	$(MAKE) -C $(LIBYDER_LOCATION) static-install
 
 clean:
-	cd $(LIBYDER_LOCATION) && $(MAKE) clean
-	cd $(EXAMPLE_LOCATION) && $(MAKE) clean
-	cd $(TEST_LOCATION) && $(MAKE) clean
+	$(MAKE) -C $(LIBYDER_LOCATION) clean
+	$(MAKE) -C $(EXAMPLE_LOCATION) clean
+	$(MAKE) -C $(TEST_LOCATION) clean
 
 check:
-	cd $(TEST_LOCATION) && $(MAKE) test
+	$(MAKE) -C $(TEST_LOCATION) test
 
-release:
-	cd $(LIBYDER_LOCATION) && $(MAKE)
+shared:
+	$(MAKE) -C $(LIBYDER_LOCATION)
 
-log_console:
-	cd $(EXAMPLE_LOCATION) && $(MAKE) log_console
+static:
+	$(MAKE) -C $(LIBYDER_LOCATION) static
 
-log_file:
-	cd $(EXAMPLE_LOCATION) && $(MAKE) log_file
+release: shared static
 
-log_syslog:
-	cd $(EXAMPLE_LOCATION) && $(MAKE) log_syslog
+log_console: shared
+	$(MAKE) -C $(EXAMPLE_LOCATION) log_console
 
-log_combined:
-	cd $(EXAMPLE_LOCATION) && $(MAKE) log_combined
+log_file: shared
+	$(MAKE) -C $(EXAMPLE_LOCATION) log_file
+
+log_syslog: shared
+	$(MAKE) -C $(EXAMPLE_LOCATION) log_syslog
+
+log_combined: shared
+	$(MAKE) -C $(EXAMPLE_LOCATION) log_combined
 
 doxygen:
 	doxygen doc/doxygen.cfg

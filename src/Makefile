@@ -29,9 +29,11 @@ CONFIG_TEMPLATE=$(YDER_INCLUDE)/yder-cfg.h.in
 CONFIG_FILE=$(YDER_INCLUDE)/yder-cfg.h
 PKGCONFIG_FILE=../libyder.pc
 PKGCONFIG_TEMPLATE=../libyder.pc.in
+orcania_INCLUDE ?= $(shell pkg-config --cflags liborcania)
+orcania_LIBS ?= $(shell pkg-config --libs liborcania)
 CC=gcc
-CFLAGS+=-c -fPIC -Wall -Werror -Wextra -D_REENTRANT -I$(YDER_INCLUDE) $(ADDITIONALFLAGS) $(CPPFLAGS)
-LIBS=-lc -lorcania $(ADDITIONALLIBS)
+CFLAGS+=-c -fPIC -Wall -Werror -Wextra -D_REENTRANT -I$(YDER_INCLUDE) $(ADDITIONALFLAGS) $(orcania_INCLUDE) $(CPPFLAGS)
+LIBS=-lc $(orcania_LIBS) $(ADDITIONALLIBS)
 OUTPUT=libyder.so
 VERSION_MAJOR=1
 VERSION_MINOR=4
@@ -94,6 +96,9 @@ clean:
 	rm -f *.o *.so *.a $(OUTPUT) $(PKGCONFIG_FILE) $(OUTPUT).* $(YDER_INCLUDE)/yder-cfg.h
 
 install: all $(PKGCONFIG_FILE)
+	install -d -m755 $(DESTDIR)/lib
+	install -d -m755 $(DESTDIR)/lib/pkgconfig
+	install -d -m755 $(DESTDIR)/include
 	install $(OUTPUT).$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH) $(DESTDIR)/lib
 	install -m644 $(PKGCONFIG_FILE) $(DESTDIR)/lib/pkgconfig
 	install -m644 $(YDER_INCLUDE)/yder.h $(DESTDIR)/include
@@ -101,6 +106,9 @@ install: all $(PKGCONFIG_FILE)
 	-ldconfig $(DESTDIR)/lib
 
 static-install: static
+	install -d -m755 $(DESTDIR)/lib
+	install -d -m755 $(DESTDIR)/lib/pkgconfig
+	install -d -m755 $(DESTDIR)/include
 	install libyder.a $(DESTDIR)/lib
 	install -m644 $(PKGCONFIG_FILE) $(DESTDIR)/lib/pkgconfig
 	install -m644 $(YDER_INCLUDE)/yder.h $(DESTDIR)/include
